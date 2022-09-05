@@ -141,12 +141,10 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    for (i in -7..7)
-        if ((kingX == rookX || kingY == rookY) && ((kingX == bishopX + i && kingY == bishopY + i) || (kingX == bishopX - i && kingY == bishopY + i) || (kingX == bishopX + i && kingY == bishopY - i)))
-            return 3
-    for (i in -7..7)
-        if ((kingX == bishopX + i && kingY == bishopY + i) || (kingX == bishopX - i && kingY == bishopY + i) || (kingX == bishopX + i && kingY == bishopY - i))
-            return 2
+    if ((kingX == rookX || kingY == rookY) && (((kingX - bishopX) == (kingY - bishopY)) || ((kingX - bishopX) == -(kingY - bishopY))))
+        return 3
+    if (((kingX - bishopX) == (kingY - bishopY)) || ((kingX - bishopX) == -(kingY - bishopY)))
+        return 2
     if (kingX == rookX || kingY == rookY)
         return 1
     return 0
@@ -163,23 +161,12 @@ fun rookOrBishopThreatens(
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     if (a >= b + c || b >= a + c || c >= a + b)
         return -1
-    if (a > b && a > c) {
-        if (a.pow(2) > b.pow(2) + c.pow(2))
-            return 2
-        if (a.pow(2) == b.pow(2) + c.pow(2))
-            return 1
-        return 0
-    }
-    if (b > a && b > c) {
-        if (b.pow(2) > a.pow(2) + c.pow(2))
-            return 2
-        if (b.pow(2) == a.pow(2) + c.pow(2))
-            return 1
-        return 0
-    }
-    if (c.pow(2) > a.pow(2) + b.pow(2))
+    val max: Double = maxOf(a, b, c)
+    val min: Double = minOf(a, b, c)
+    val mid: Double = a + b + c - max - min
+    if (max.pow(2) > mid.pow(2) + min.pow(2))
         return 2
-    if (c.pow(2) == a.pow(2) + b.pow(2))
+    if (max.pow(2) == mid.pow(2) + min.pow(2))
         return 1
     return 0
 }
@@ -192,4 +179,9 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    return if ((c < b || a < d) && (minOf(b, d) - max(a, c) >= 0))
+        minOf(b, d) - max(a, c)
+    else
+        -1
+}
