@@ -93,7 +93,7 @@ fun timeForHalfWay(
     t2: Double, v2: Double,
     t3: Double, v3: Double
 ): Double {
-    var distance: Double = (t1 * v1 + t2 * v2 + t3 * v3) / 2
+    var distance = (t1 * v1 + t2 * v2 + t3 * v3) / 2
     if (distance <= t1 * v1)
         return distance / v1
     distance -= t1 * v1
@@ -161,9 +161,9 @@ fun rookOrBishopThreatens(
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     if (a >= b + c || b >= a + c || c >= a + b)
         return -1
-    val max: Double = maxOf(a, b, c)
-    val min: Double = minOf(a, b, c)
-    val mid: Double = a + b + c - max - min
+    val max = maxOf(a, b, c)
+    val min = minOf(a, b, c)
+    val mid = a + b + c - max - min
     if (max.pow(2) > mid.pow(2) + min.pow(2))
         return 2
     if (max.pow(2) == mid.pow(2) + min.pow(2))
