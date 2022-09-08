@@ -28,7 +28,8 @@ fun isNumberHappy(number: Int): Boolean = (number / 1000 + number % 1000 / 100) 
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = (x1==x2||y1==y2)||(x1-x2==y1-y2)||(x1-x2==y2-y1)
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
+    (x1 == x2 || y1 == y2) || (x1 - x2 == y1 - y2) || (x1 - x2 == y2 - y1)
 
 
 /**
@@ -64,7 +65,7 @@ fun daysInMonth(month: Int, year: Int): Int {
 fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
-): Boolean = TODO()
+): Boolean = kotlin.math.sqrt((x1 - x2).pow(2) + (y1 - y2).pow(2)) <= r2 - r1
 
 /**
  * Средняя (3 балла)
@@ -75,4 +76,6 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = TODO()
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
+    (minOf(a, b, c) <= minOf(r, s) && (a + b + c - minOf(a, b, c) - maxOf(a, b, c)) <= maxOf(r, s))
+
