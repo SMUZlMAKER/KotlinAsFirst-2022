@@ -2,6 +2,9 @@
 
 package lesson3.task1
 
+import kotlin.math.abs
+import lesson1.task1.sqr
+import kotlin.math.PI
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -101,9 +104,12 @@ fun fib(n: Int): Int = ((((1 + sqrt(5.0)) / 2).pow(n) - ((1 - sqrt(5.0)) / 2).po
  */
 fun minDivisor(n: Int): Int {
     var i = 2
-    while (n % i != 0)
+    while (n % i != 0 && i <= sqrt(n.toDouble()))
         i++
-    return i
+    return if (n % i == 0)
+        i
+    else
+        n
 }
 
 /**
@@ -111,12 +117,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var i = n - 1
-    while (n % i != 0)
-        i--
-    return i
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -253,13 +254,17 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Подумайте, как добиться более быстрой сходимости ряда при больших значениях x.
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
+
 fun sin(x: Double, eps: Double): Double {
-    var sin = x
-    var tmp = x
+    var x1 = x
+    if (x1 >= 2 * PI)
+        x1 = (x1 % (2 * PI)) * 2 * PI
+    var sin = x1
+    var tmp = x1
     var i = 0
-    while (kotlin.math.abs(tmp) >= kotlin.math.abs(eps)) {
+    while (abs(tmp) >= abs(eps)) {
         i += 2
-        tmp = (-tmp * x * x) / (i * (i + 1))
+        tmp = (-tmp * x1 * x1) / (i * (i + 1))
         sin += tmp
     }
     return sin
@@ -275,11 +280,14 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
+    var x1 = x
+    if (x1 >= 2 * PI)
+        x1 = (x1 % (2 * PI)) * 2 * PI
     var cos = 1.0
     var tmp = 1.0
     var i = 1
-    while (kotlin.math.abs(tmp) >= kotlin.math.abs(eps)) {
-        tmp = -tmp * x * x / (i * (i + 1))
+    while (abs(tmp) >= abs(eps)) {
+        tmp = -tmp * x1 * x1 / (i * (i + 1))
         cos += tmp
         i += 2
     }
@@ -295,15 +303,16 @@ fun cos(x: Double, eps: Double): Double {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int {
+fun next(n: Int, function: (Int) -> Int): Int {
     var count = n
     var i = 1
-    while (count - digitNumber(i * i) > 0) {
-        count -= digitNumber(i * i)
+    while (count - digitNumber(function(i)) > 0) {
+        count -= digitNumber(function(i))
         i++
     }
-    return (i * i / ((10.0).pow(digitNumber(i * i) - count)).toInt()) % 10
+    return (function(i) / ((10.0).pow(digitNumber(function(i)) - count)).toInt()) % 10
 }
+fun squareSequenceDigit(n: Int): Int = next(n, ::sqr)
 
 /**
  * Сложная (5 баллов)
@@ -314,12 +323,7 @@ fun squareSequenceDigit(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int {
-    var count = n
-    var i = 1
-    while (count - digitNumber(fib(i)) > 0) {
-        count -= digitNumber(fib(i))
-        i++
-    }
-    return (fib(i) / ((10.0).pow(digitNumber(fib(i)) - count)).toInt()) % 10
-}
+fun fibSequenceDigit(n: Int): Int = next(n, ::fib)
+
+
+
