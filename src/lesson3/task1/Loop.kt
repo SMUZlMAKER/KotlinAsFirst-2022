@@ -257,8 +257,7 @@ fun hasDifferentDigits(n: Int): Boolean {
 
 fun sin(x: Double, eps: Double): Double {
     var x1 = x
-    if ((x1 >= 2 * PI)||(x1 <= -2 * PI))
-        x1 = (x1 % (2 * PI)) * 2 * PI
+    x1 = (x1 % (2 * PI))
     var sin = x1
     var tmp = x1
     var i = 0
@@ -281,8 +280,7 @@ fun sin(x: Double, eps: Double): Double {
  */
 fun cos(x: Double, eps: Double): Double {
     var x1 = x
-    if ((x1 >= 2 * PI)||(x1 <= -2 * PI))
-        x1 = (x1 % (2 * PI)) * 2 * PI
+    x1 = (x1 % (2 * PI))
     var cos = 1.0
     var tmp = 1.0
     var i = 1
