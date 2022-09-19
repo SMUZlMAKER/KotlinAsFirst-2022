@@ -131,7 +131,7 @@ fun abs(v: List<Double>): Double = sqrt(v.fold(0.0) { prev, el -> prev + sqr(el)
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
 fun mean(list: List<Double>): Double =
-    list.fold(0.0) { prev, el -> prev + el } / if(list.isEmpty()) 1 else list.size
+    list.fold(0.0) { prev, el -> prev + el } / if (list.isEmpty()) 1 else list.size
 
 /**
  * Средняя (3 балла)
@@ -197,7 +197,7 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  */
 fun factorize(n: Int): List<Int> {
     var n1 = n
-    var result = mutableListOf<Int>()
+    val result = mutableListOf<Int>()
     while (n1 > 1) {
         var i = 2
         while (n1 % i != 0)
@@ -240,10 +240,10 @@ fun factorizeToString(n: Int): String {
  */
 fun convert(n: Int, base: Int): List<Int> {
     var tmp = n
-    var list = mutableListOf<Int>()
-    while(tmp >= 1){
-        list.add(0,tmp%base)
-        tmp/=base
+    val list = mutableListOf<Int>()
+    while (tmp >= 1) {
+        list.add(0, tmp % base)
+        tmp /= base
     }
     return list
 }
@@ -280,7 +280,7 @@ fun convertToString(n: Int, base: Int): String {
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
 fun decimal(digits: List<Int>, base: Int): Int {
-    var degree = digits.size - 1
+    val degree = digits.size - 1
     var sum = 0
     for (i in digits.indices)
         sum += digits[i] * (base.toDouble().pow(degree - i).toInt())
@@ -301,7 +301,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var sum = 0
-    var degree = str.length
+    val degree = str.length
     for (i in 0 until degree) {
         sum += base.toDouble().pow(degree - 1 - i).toInt() * if (str[i].code < 97 || str[i].code > 122)
             str[i].code - 48
@@ -342,6 +342,7 @@ fun step(max: String, mid: String, min: String, n: Int): String {
     }
     return str
 }
+
 fun roman(n: Int): String {
     var str = String()
     var n1 = n
@@ -367,5 +368,69 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    var n1 = n / 1000
+    var str = String()
+    for (i in 0..1) {
+        if (n1 > 0) {
+            str += when (n1 / 100) {
+                1 -> "сто "
+                2 -> "двести "
+                3 -> "триста "
+                4 -> "четыреста "
+                5 -> "пятьсот "
+                6 -> "шестьсот "
+                7 -> "семьсот "
+                8 -> "восемьсот "
+                9 -> "девятьсот "
+                else -> ""
+            }
+            str += when (n1 / 10 % 10) {
+                1 -> when (n1 % 10) {
+                    1 -> "одиннадцать "
+                    2 -> "двенадцать "
+                    3 -> "тринадцать "
+                    4 -> "четырнадцать "
+                    5 -> "пятнадцать "
+                    6 -> "шестнадцать "
+                    7 -> "семьнадцать "
+                    8 -> "восемьнадцать "
+                    9 -> "девятнадцать "
+                    else -> "десять "
+                }
+
+                2 -> "двадцать "
+                3 -> "тридцать "
+                4 -> "сорок "
+                5 -> "пятьдесят "
+                6 -> "шестьдесят "
+                7 -> "семьдесят "
+                8 -> "восемьдесят "
+                9 -> "девяносто "
+                else -> ""
+            }
+            if (n1 / 10 % 10 != 1)
+                str += when (n1 % 10) {
+                    1 -> if (n / 1000 == n1) "одна " else "один "
+                    2 -> if (n / 1000 == n1) "две " else "два"
+                    3 -> "три "
+                    4 -> "четыре "
+                    5 -> "пять "
+                    6 -> "шесть "
+                    7 -> "семь "
+                    8 -> "восемь "
+                    9 -> "девять "
+                    else -> ""
+                }
+            if (n / 1000 == n1)
+                str += when (n1 % 10) {
+                    1 -> "тысяча "
+                    in 2..4 -> "тысячи "
+                    else -> "тысяч "
+                }
+        }
+        n1 = n % 1000
+    }
+    return str.trim()
+}
 
