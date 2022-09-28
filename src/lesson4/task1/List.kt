@@ -141,7 +141,12 @@ fun mean(list: List<Double>): Double =
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = (list - mean(list)).toMutableList()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val tmp = mean(list)
+    for (i in 0 until list.size)
+        list[i] -= tmp
+    return list
+}
 
 /**
  * Средняя (3 балла)
@@ -241,10 +246,10 @@ fun factorizeToString(n: Int): String {
 fun convert(n: Int, base: Int): List<Int> {
     var tmp = n
     val list = mutableListOf<Int>()
-    while (tmp >= 1) {
+    do {
         list.add(0, tmp % base)
         tmp /= base
-    }
+    } while (tmp >= 1)
     return list
 }
 
@@ -262,13 +267,13 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     var tmp = n
     var str = String()
-    while (tmp >= 1) {
+    do {
         str = if (tmp % base > 9)
             (tmp % base + 87).toChar() + str
         else
             (tmp % base).toString() + str
         tmp /= base
-    }
+    } while (tmp > 0)
     return str
 }
 
@@ -370,67 +375,75 @@ fun roman(n: Int): String {
  */
 fun russian(n: Int): String {
     var n1 = n / 1000
-    var str = String()
+    val str = StringBuilder()
     for (i in 0..1) {
         if (n1 > 0) {
-            str += when (n1 / 100) {
-                1 -> "сто "
-                2 -> "двести "
-                3 -> "триста "
-                4 -> "четыреста "
-                5 -> "пятьсот "
-                6 -> "шестьсот "
-                7 -> "семьсот "
-                8 -> "восемьсот "
-                9 -> "девятьсот "
-                else -> ""
-            }
-            str += when (n1 / 10 % 10) {
-                1 -> when (n1 % 10) {
-                    1 -> "одиннадцать "
-                    2 -> "двенадцать "
-                    3 -> "тринадцать "
-                    4 -> "четырнадцать "
-                    5 -> "пятнадцать "
-                    6 -> "шестнадцать "
-                    7 -> "семьнадцать "
-                    8 -> "восемьнадцать "
-                    9 -> "девятнадцать "
-                    else -> "десять "
-                }
-
-                2 -> "двадцать "
-                3 -> "тридцать "
-                4 -> "сорок "
-                5 -> "пятьдесят "
-                6 -> "шестьдесят "
-                7 -> "семьдесят "
-                8 -> "восемьдесят "
-                9 -> "девяносто "
-                else -> ""
-            }
-            if (n1 / 10 % 10 != 1)
-                str += when (n1 % 10) {
-                    1 -> if (n / 1000 == n1) "одна " else "один "
-                    2 -> if (n / 1000 == n1) "две " else "два"
-                    3 -> "три "
-                    4 -> "четыре "
-                    5 -> "пять "
-                    6 -> "шесть "
-                    7 -> "семь "
-                    8 -> "восемь "
-                    9 -> "девять "
+            str.append(
+                when (n1 / 100) {
+                    1 -> "сто "
+                    2 -> "двести "
+                    3 -> "триста "
+                    4 -> "четыреста "
+                    5 -> "пятьсот "
+                    6 -> "шестьсот "
+                    7 -> "семьсот "
+                    8 -> "восемьсот "
+                    9 -> "девятьсот "
                     else -> ""
                 }
-            if (n / 1000 == n1)
-                str += when (n1 % 10) {
-                    1 -> "тысяча "
-                    in 2..4 -> "тысячи "
-                    else -> "тысяч "
+            )
+            str.append(
+                when (n1 / 10 % 10) {
+                    1 -> when (n1 % 10) {
+                        1 -> "одиннадцать "
+                        2 -> "двенадцать "
+                        3 -> "тринадцать "
+                        4 -> "четырнадцать "
+                        5 -> "пятнадцать "
+                        6 -> "шестнадцать "
+                        7 -> "семьнадцать "
+                        8 -> "восемьнадцать "
+                        9 -> "девятнадцать "
+                        else -> "десять "
+                    }
+
+                    2 -> "двадцать "
+                    3 -> "тридцать "
+                    4 -> "сорок "
+                    5 -> "пятьдесят "
+                    6 -> "шестьдесят "
+                    7 -> "семьдесят "
+                    8 -> "восемьдесят "
+                    9 -> "девяносто "
+                    else -> ""
                 }
+            )
+            if (n1 / 10 % 10 != 1)
+                str.append(
+                    when (n1 % 10) {
+                        1 -> if (n / 1000 == n1) "одна " else "один "
+                        2 -> if (n / 1000 == n1) "две " else "два"
+                        3 -> "три "
+                        4 -> "четыре "
+                        5 -> "пять "
+                        6 -> "шесть "
+                        7 -> "семь "
+                        8 -> "восемь "
+                        9 -> "девять "
+                        else -> ""
+                    }
+                )
+            if (n / 1000 == n1)
+                str.append(
+                    when (n1 % 10) {
+                        1 -> "тысяча "
+                        in 2..4 -> "тысячи "
+                        else -> "тысяч "
+                    }
+                )
         }
         n1 = n % 1000
     }
-    return str.trim()
+    return str.toString().trim()
 }
 
