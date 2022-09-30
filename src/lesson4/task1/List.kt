@@ -222,18 +222,20 @@ fun factorize(n: Int): List<Int> {
  */
 fun factorizeToString(n: Int): String {
     var n1 = n
-    var result = String()
+    val result = StringBuilder()
     while (n1 > 1) {
         var i = 2
         while (n1 % i != 0)
             i++
         n1 /= i
-        result += if (result.isEmpty())
-            "$i"
-        else
-            "*$i"
+        result.append(
+            if (result.isEmpty())
+                "$i"
+            else
+                "*$i"
+        )
     }
-    return result
+    return result.toString()
 }
 
 /**
@@ -247,10 +249,10 @@ fun convert(n: Int, base: Int): List<Int> {
     var tmp = n
     val list = mutableListOf<Int>()
     do {
-        list.add(0, tmp % base)
+        list.add(tmp % base)
         tmp /= base
     } while (tmp >= 1)
-    return list
+    return list.reversed()
 }
 
 /**
@@ -264,18 +266,15 @@ fun convert(n: Int, base: Int): List<Int> {
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String {
-    var tmp = n
-    var str = String()
-    do {
-        str = if (tmp % base > 9)
-            (tmp % base + 87).toChar() + str
-        else
-            (tmp % base).toString() + str
-        tmp /= base
-    } while (tmp > 0)
-    return str
-}
+fun convertToString(n: Int, base: Int): String =
+    convert(n, base).fold(StringBuilder()) { prev, el ->
+        prev.append(
+            if (el > 9)
+                ('a' + el - 10)
+            else
+                (el).toString()
+        )
+    }.toString()
 
 /**
  * Средняя (3 балла)
@@ -308,10 +307,10 @@ fun decimalFromString(str: String, base: Int): Int {
     var sum = 0
     val degree = str.length
     for (i in 0 until degree) {
-        sum += base.toDouble().pow(degree - 1 - i).toInt() * if (str[i].code < 97 || str[i].code > 122)
-            str[i].code - 48
+        sum += base.toDouble().pow(degree - 1 - i).toInt() * if (str[i] < 'a' || str[i] > 'z')
+            str[i] - '0'
         else
-            str[i].code - 87
+            (str[i] - 'a') + 10
     }
     return sum
 }
