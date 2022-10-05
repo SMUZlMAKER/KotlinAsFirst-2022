@@ -220,23 +220,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String {
-    var n1 = n
-    val result = StringBuilder()
-    while (n1 > 1) {
-        var i = 2
-        while (n1 % i != 0)
-            i++
-        n1 /= i
-        result.append(
-            if (result.isEmpty())
-                "$i"
-            else
-                "*$i"
-        )
-    }
-    return result.toString()
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
 
 /**
  * Средняя (3 балла)
@@ -270,7 +254,7 @@ fun convertToString(n: Int, base: Int): String =
     convert(n, base).fold(StringBuilder()) { prev, el ->
         prev.append(
             if (el > 9)
-                ('a' + el - 10)
+                'a' + el - 10
             else
                 (el).toString()
         )
@@ -325,44 +309,44 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun step(max: String, mid: String, min: String, n: Int): String {
     var n1 = n
-    var str = String()
+    val str = StringBuilder()
     val del = (10.0).pow(digitNumber(n) - 1).toInt()
     if (n1 / del == 9)
-        str += "$min$max"
+        str.append("$min$max")
     else {
         if (n1 / del >= 5) {
-            str += mid
+            str.append(mid)
             n1 -= 5 * del
             for (i in 0 until n1 / del)
-                str += min
+                str.append(min)
         } else {
             if (n1 / del == 4) {
-                str += "$min$mid"
+                str.append("$min$mid")
                 n1 -= 4 * del
             }
             for (i in 0 until n1 / del)
-                str += min
+                str.append(min)
         }
     }
-    return str
+    return str.toString()
 }
 
 fun roman(n: Int): String {
-    var str = String()
+    val str = StringBuilder()
     var n1 = n
     for (i in 0 until n1 / 1000)
-        str += "M"
+        str.append("M")
     n1 = n % 1000
     if (digitNumber(n1) == 3) {
-        str += step("M", "D", "C", n1)
+        str.append(step("M", "D", "C", n1))
         n1 %= 100
     }
     if (digitNumber(n1) == 2) {
-        str += step("C", "L", "X", n1)
+        str.append(step("C", "L", "X", n1))
         n1 %= 10
     }
-    str += step("X", "V", "I", n1)
-    return str
+    str.append(step("X", "V", "I", n1))
+    return str.toString()
 }
 
 /**
@@ -434,11 +418,14 @@ fun russian(n: Int): String {
                 )
             if (n / 1000 == n1)
                 str.append(
-                    when (n1 % 10) {
-                        1 -> "тысяча "
-                        in 2..4 -> "тысячи "
-                        else -> "тысяч "
-                    }
+                    if (n1 % 100 in 10..19)
+                        "тысяч "
+                    else
+                        when (n1 % 10) {
+                            1 -> "тысяча "
+                            in 2..4 -> "тысячи "
+                            else -> "тысяч "
+                        }
                 )
         }
         n1 = n % 1000
