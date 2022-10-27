@@ -256,7 +256,7 @@ fun convertToString(n: Int, base: Int): String =
             if (el > 9)
                 'a' + el - 10
             else
-                (el).toString()
+                el.toString()
         )
     }.toString()
 
