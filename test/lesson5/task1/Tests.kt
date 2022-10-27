@@ -103,10 +103,6 @@ class Tests {
     @Tag("2")
     fun buildGrades() {
         assertEquals(
-            mapOf(0 to listOf(">4bN'b/$`")),
-            buildGrades(mapOf(">4bN'b/$`" to 0))
-        )
-        assertEquals(
             mapOf<Int, List<String>>(),
             buildGrades(mapOf())
         )
