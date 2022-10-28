@@ -416,7 +416,7 @@ fun russian(n: Int): String {
                         else -> ""
                     }
                 )
-            if (n / 1000 == n1)
+            if (i==0)
                 str.append(
                     if (n1 % 100 in 10..19)
                         "тысяч "
