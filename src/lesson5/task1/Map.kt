@@ -197,7 +197,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val res = mutableMapOf<String, String>()
     for ((key, value) in mapA) {
-        if (mapB.containsKey(key) && (value != mapB[key]))
+        if (mapB.containsKey(key) && value != mapB[key])
             res[key] = value + ", " + mapB[key]
         else
             res[key] = value
@@ -221,11 +221,11 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val res = mutableMapOf<String, Double>()
-    for ((first) in stockPrices)
-        if (!res.contains(first))
-            res[first] = stockPrices.filter(fun(it: Pair<String, Double>) = it.first == first).fold(0.0)
+    for ((ticker) in stockPrices)
+        if (!res.contains(ticker))
+            res[ticker] = stockPrices.filter(fun(it: Pair<String, Double>) = it.first == ticker).fold(0.0)
             { prev, el -> prev + el.second } / stockPrices.filter(
-                fun(it: Pair<String, Double>) = it.first == first).size
+                fun(it: Pair<String, Double>) = it.first == ticker).size
     return res
 
 }
