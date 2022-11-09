@@ -256,7 +256,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean =
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
-    val res = mutableMapOf<String,Int>()
+    val res = mutableMapOf<String, Int>()
     list.forEach { res[it] = (res[it] ?: 0) + 1 }
     return res.filterValues { it > 1 }.toMap()
 }
@@ -367,4 +367,20 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    var table = Array(treasures.size + 1) { Array(capacity) { 0 } }
+    val weightToCost = treasures.values.toList()
+    val names = treasures.keys.toList()
+    weightToCost.forEachIndexed { i, (weight, cost) ->
+        for (j in 0 until capacity)
+            table[i + 1][j] = if (j >= weight)
+                maxOf(table[i][j], cost + table[i][j + 1 - weight])
+            else
+                table[i][j]
+    }
+    val res = mutableSetOf<String>()
+    for (i in treasures.size downTo 1)
+        if (table[i].max() - table[i - 1].max() == weightToCost[i - 1].second)
+            res.add(names[i - 1])
+    return res
+}
