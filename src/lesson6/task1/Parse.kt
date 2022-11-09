@@ -181,7 +181,7 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     if (!jumps.contains(Regex("""[^0-9% -]""")) && jumps.isNotEmpty()) {
         val num = mutableListOf<Int>()
-        jumps.split(" ").forEach { if (it.first().isDigit()) num.add(it.toInt()) }
+        jumps.split(Regex("""( )+""" )).forEach { if (it.first().isDigit()) num.add(it.toInt()) }
         if (num.size > 0)
             return num.max()
     }
@@ -251,7 +251,7 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     if (str.isNotEmpty()) {
-        val match = Regex("""([а-яa-zё]+)\s\1""").find(str.lowercase())
+        val match = Regex("""([^ ]+)\s\1""").find(str.lowercase())
         if (match != null)
             return match.range.first
     }
@@ -270,7 +270,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.lowercase().contains(Regex("""[^0-9а-яa-zё;. ]""")) && description.isNotEmpty()) {
+    if (description.isNotEmpty()) {
         val products = description.filter { it != ';' }.split(" ")
         val prod = mutableMapOf<Double, String>()
         for (i in 0..products.size - 2 step 2)

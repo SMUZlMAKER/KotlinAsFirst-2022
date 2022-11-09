@@ -215,9 +215,7 @@ fun revert(n: Int): Int {
 fun isPalindrome(n: Int): Boolean {
     var temp = n
     val len = digitNumber(temp)
-    var del = 10
-    for (i in 1..len - 2)
-        del *= 10
+    var del = 10.0.pow(len-1).toInt()
     for (i in 0 until len / 2)
         if (temp % 10 == temp / del) {
             temp = temp % del / 10
