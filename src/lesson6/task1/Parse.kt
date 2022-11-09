@@ -78,7 +78,7 @@ fun main() {
  * входными данными.
  */
 fun dateStrToDigit(str: String): String {
-    if (str.isNotEmpty()) {
+    if (!str.contains(Regex("""[^0-9а-я. ]""")) && str.isNotEmpty()) {
         val parts = str.split(" ").toMutableList()
         if (parts.size == 3) {
             parts[1] = when (parts[1]) {
@@ -118,10 +118,10 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (!digital.contains(Regex("[^0123456789.]")) && digital.isNotEmpty()) {
+    if (!digital.contains(Regex("""[^0-9.]""")) && digital.isNotEmpty()) {
         val parts = digital.split(".").toMutableList()
-        parts.forEachIndexed { i, it -> parts[i] = it.toInt().toString() }
-        if (parts.size == 3)
+        if (parts.size == 3) {
+            parts.forEachIndexed { i, it -> parts[i] = it.toInt().toString() }
             if (parts[2].toInt() > 0)
                 if (parts[1].toInt() in 1..12)
                     if (parts[0].toInt() in 1..lesson2.task2.daysInMonth(parts[1].toInt(), parts[2].toInt())) {
@@ -142,6 +142,7 @@ fun dateDigitToStr(digital: String): String {
                         }
                         return parts.joinToString(" ")
                     }
+        }
     }
     return ""
 }
@@ -161,7 +162,7 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (!phone.contains(Regex("""[^0123456789() +-]""")))
+    if (!phone.contains(Regex("""[^0-9() +-]""")) && phone.isNotEmpty())
         if (phone.contains(Regex("""\((?=[ -]*[0-9]+[0-9 -]*\))""")) || !phone.contains(Regex("""[)(]""")))
             return phone.filter { it !in "^() -]" }
     return ""
@@ -178,7 +179,7 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    if (!jumps.contains(Regex("""[^0-9% -]"""))) {
+    if (!jumps.contains(Regex("""[^0-9% -]""")) && jumps.isNotEmpty()) {
         val num = mutableListOf<Int>()
         jumps.split(" ").forEach { if (it.first().isDigit()) num.add(it.toInt()) }
         if (num.size > 0)
@@ -250,7 +251,7 @@ fun plusMinus(expression: String): Int {
  */
 fun firstDuplicateIndex(str: String): Int {
     if (str.isNotEmpty()) {
-        val match = Regex("""([а-яё]+)\s\1""").find(str.lowercase())
+        val match = Regex("""([а-яa-zё]+)\s\1""").find(str.lowercase())
         if (match != null)
             return match.range.first
     }
@@ -269,7 +270,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (!description.lowercase().contains(Regex("""[^0-9а-яё;. ]""")) && description.isNotEmpty()) {
+    if (!description.lowercase().contains(Regex("""[^0-9а-яa-zё;. ]""")) && description.isNotEmpty()) {
         val products = description.filter { it != ';' }.split(" ")
         val prod = mutableMapOf<Double, String>()
         for (i in 0..products.size - 2 step 2)

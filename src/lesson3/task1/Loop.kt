@@ -218,13 +218,12 @@ fun isPalindrome(n: Int): Boolean {
     var del = 10
     for (i in 1..len - 2)
         del *= 10
-    while (temp > 9) {
+    for (i in 0 until len / 2)
         if (temp % 10 == temp / del) {
             temp = temp % del / 10
             del /= 100
         } else
             return false
-    }
     return true
 }
 
