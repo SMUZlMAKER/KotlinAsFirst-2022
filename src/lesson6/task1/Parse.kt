@@ -161,12 +161,12 @@ fun dateDigitToStr(digital: String): String {
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String {
-    if (!phone.contains(Regex("""[^0-9() +-]""")) && phone.isNotEmpty())
-        if (phone.contains(Regex("""\((?=[ -]*[0-9]+[0-9 -]*\))""")) || !phone.contains(Regex("""[)(]""")))
-            return phone.filter { it !in "^() -]" }
-    return ""
-}
+fun flattenPhoneNumber(phone: String): String =
+    if (phone.matches(Regex("""(\+[ -]*[0-9]+)?([ -]*\([ -]*[0-9]+[0-9 -]*\))?[ -]*[0-9]+[0-9 -]*""")))
+        phone.filter { it !in "^() -]" }
+    else
+        ""
+
 
 /**
  * Средняя (5 баллов)
