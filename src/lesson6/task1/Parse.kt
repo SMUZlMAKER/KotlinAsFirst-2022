@@ -78,33 +78,33 @@ fun main() {
  * входными данными.
  */
 fun dateStrToDigit(str: String): String {
-    if (!str.contains(Regex("""[^\dа-я. ]""")) && str.isNotEmpty()) {
-        val parts = str.split(" ").toMutableList()
-        if (parts.size == 3) {
-            parts[1] = when (parts[1]) {
-                "января" -> "01"
-                "февраля" -> "02"
-                "марта" -> "03"
-                "апреля" -> "04"
-                "мая" -> "05"
-                "июня" -> "06"
-                "июля" -> "07"
-                "августа" -> "08"
-                "сентября" -> "09"
-                "октября" -> "10"
-                "ноября" -> "11"
-                "декабря" -> "12"
-                else -> return ""
-            }
-            val numbers = MutableList(3) { 0 }
-            parts.forEachIndexed { i: Int, it: String -> numbers[i] = it.toInt() }
-            if (numbers[2] > 0)
-                if (numbers[1] in 1..12)
-                    if (numbers[0] in 1..lesson2.task2.daysInMonth(numbers[1], numbers[2]))
-                        return String.format("%02d.%02d.%d", numbers[0], numbers[1], numbers[2])
-        }
+    val match = Regex("""(\d+)\s([а-я]+)\s(\d+)""").matchEntire(str) ?: return ""
+    val numbers = mutableListOf(
+        match.groupValues[1].toIntOrNull() ?: return "",
+        0,
+        match.groupValues[3].toIntOrNull() ?: return ""
+    )
+    numbers[1] = when (match.groupValues[2]) {
+        "января" -> 1
+        "февраля" -> 2
+        "марта" -> 3
+        "апреля" -> 4
+        "мая" -> 5
+        "июня" -> 6
+        "июля" -> 7
+        "августа" -> 8
+        "сентября" -> 9
+        "октября" -> 10
+        "ноября" -> 11
+        "декабря" -> 12
+        else -> return ""
     }
-    return ""
+    return if (numbers[2] > 0 && numbers[1] in 1..12 &&
+        numbers[0] in 1..lesson2.task2.daysInMonth(numbers[1], numbers[2])
+    )
+        String.format("%02d.%02d.%d", numbers[0], numbers[1], numbers[2])
+    else
+        ""
 }
 
 /**
@@ -118,32 +118,26 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (!digital.contains(Regex("""[^\d.]""")) && digital.isNotEmpty()) {
-        val parts = digital.split(".").toMutableList()
-        if (parts.size == 3) {
-            parts.forEachIndexed { i, it -> parts[i] = it.toInt().toString() }
-            if (parts[2].toInt() > 0)
-                if (parts[1].toInt() in 1..12)
-                    if (parts[0].toInt() in 1..lesson2.task2.daysInMonth(parts[1].toInt(), parts[2].toInt())) {
-                        parts[1] = when (parts[1]) {
-                            "1" -> "января"
-                            "2" -> "февраля"
-                            "3" -> "марта"
-                            "4" -> "апреля"
-                            "5" -> "мая"
-                            "6" -> "июня"
-                            "7" -> "июля"
-                            "8" -> "августа"
-                            "9" -> "сентября"
-                            "10" -> "октября"
-                            "11" -> "ноября"
-                            "12" -> "декабря"
-                            else -> return ""
-                        }
-                        return parts.joinToString(" ")
-                    }
-        }
-    }
+    val match = Regex("""(\d\d).(\d\d).(\d+)""").matchEntire(digital) ?: return ""
+    if (match.groupValues[3].toInt() > 0 && match.groupValues[2].toInt() in 1..12 &&
+        match.groupValues[1].toInt() in 1..
+        lesson2.task2.daysInMonth(match.groupValues[2].toInt(), match.groupValues[3].toInt())
+    )
+        return match.groupValues[1].toInt().toString() + " " + when (match.groupValues[2]) {
+            "01" -> "января"
+            "02" -> "февраля"
+            "03" -> "марта"
+            "04" -> "апреля"
+            "05" -> "мая"
+            "06" -> "июня"
+            "07" -> "июля"
+            "08" -> "августа"
+            "09" -> "сентября"
+            "10" -> "октября"
+            "11" -> "ноября"
+            "12" -> "декабря"
+            else -> return ""
+        } + " " + match.groupValues[3]
     return ""
 }
 
@@ -163,10 +157,9 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String =
     if (phone.matches(Regex("""(\+[ -]*\d+)?([ -]*\([ -]*\d+[\d -]*\))?[ -]*\d+[\d -]*""")))
-        phone.filter { it !in "^() -]" }
+        phone.filter { it !in "() -" }
     else
         ""
-
 
 /**
  * Средняя (5 баллов)
@@ -180,8 +173,8 @@ fun flattenPhoneNumber(phone: String): String =
  */
 fun bestLongJump(jumps: String): Int {
     var max = -1
-    if (!jumps.contains(Regex("""[^\d% -]""")) && jumps.isNotEmpty()) {
-        val match = Regex("""(\d+)""").findAll(jumps)
+     if(!jumps.contains(Regex("""[^\d% -]""")) && jumps.isNotEmpty()) {
+        val match = Regex("""[% -]*(\d+)""").findAll(jumps)
         match.forEach { if (it.groupValues.last().toInt() >= max) max = it.groupValues.last().toInt() }
     }
     return max
@@ -199,10 +192,14 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    if (!jumps.contains(Regex("""[^\d%+ -]""")) && jumps.isNotEmpty()) {
+    if (jumps.isNotEmpty()) {
         val num = mutableListOf<Int>()
         val str = jumps.split(" ")
-        str.forEachIndexed { i, it -> if (it.first().isDigit() && str[i + 1].contains("+")) num.add(it.toInt()) }
+        str.forEachIndexed { i, it ->
+            if (it.matches(Regex("""\d+""")) &&
+                str[i + 1].contains("+") && !str[i + 1].contains(Regex("""[^%+-]"""))
+            ) num.add(it.toInt())
+        }
         if (num.size > 0)
             return num.max()
     }
@@ -219,7 +216,7 @@ fun bestHighJump(jumps: String): Int {
  * При нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (!expression.contains(Regex("""[^\d+ -]""")) && expression.isNotEmpty()) {
+    if (expression.isNotEmpty()) {
         var sum = 0
         val str = expression.split(Regex("""\s+"""))
         if (str.size % 2 == 1) {
