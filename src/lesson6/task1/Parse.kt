@@ -78,7 +78,7 @@ fun main() {
  * входными данными.
  */
 fun dateStrToDigit(str: String): String {
-    if (!str.contains(Regex("""[^0-9а-я. ]""")) && str.isNotEmpty()) {
+    if (!str.contains(Regex("""[^\dа-я. ]""")) && str.isNotEmpty()) {
         val parts = str.split(" ").toMutableList()
         if (parts.size == 3) {
             parts[1] = when (parts[1]) {
@@ -118,7 +118,7 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    if (!digital.contains(Regex("""[^0-9.]""")) && digital.isNotEmpty()) {
+    if (!digital.contains(Regex("""[^\d.]""")) && digital.isNotEmpty()) {
         val parts = digital.split(".").toMutableList()
         if (parts.size == 3) {
             parts.forEachIndexed { i, it -> parts[i] = it.toInt().toString() }
@@ -162,7 +162,7 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String =
-    if (phone.matches(Regex("""(\+[ -]*[0-9]+)?([ -]*\([ -]*[0-9]+[0-9 -]*\))?[ -]*[0-9]+[0-9 -]*""")))
+    if (phone.matches(Regex("""(\+[ -]*\d+)?([ -]*\([ -]*\d+[\d -]*\))?[ -]*\d+[\d -]*""")))
         phone.filter { it !in "^() -]" }
     else
         ""
@@ -179,13 +179,12 @@ fun flattenPhoneNumber(phone: String): String =
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    if (!jumps.contains(Regex("""[^0-9% -]""")) && jumps.isNotEmpty()) {
-        val num = mutableListOf<Int>()
-        jumps.split(Regex("""( )+""" )).forEach { if (it.first().isDigit()) num.add(it.toInt()) }
-        if (num.size > 0)
-            return num.max()
+    var max = -1
+    if (!jumps.contains(Regex("""[^\d% -]""")) && jumps.isNotEmpty()) {
+        val match = Regex("""(\d+)""").findAll(jumps)
+        match.forEach { if (it.groupValues.last().toInt() >= max) max = it.groupValues.last().toInt() }
     }
-    return -1
+    return max
 }
 
 /**
@@ -200,7 +199,7 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    if (!jumps.contains(Regex("""[^0-9%+ -]""")) && jumps.isNotEmpty()) {
+    if (!jumps.contains(Regex("""[^\d%+ -]""")) && jumps.isNotEmpty()) {
         val num = mutableListOf<Int>()
         val str = jumps.split(" ")
         str.forEachIndexed { i, it -> if (it.first().isDigit() && str[i + 1].contains("+")) num.add(it.toInt()) }
@@ -220,22 +219,21 @@ fun bestHighJump(jumps: String): Int {
  * При нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (!expression.contains(Regex("""[^0-9+ -]""")) && expression.isNotEmpty()) {
+    if (!expression.contains(Regex("""[^\d+ -]""")) && expression.isNotEmpty()) {
         var sum = 0
-        val str = expression.split(" ")
+        val str = expression.split(Regex("""\s+"""))
         if (str.size % 2 == 1) {
-            if (!str[0].contains(Regex("""[^0-9]""")))
+            if (!str[0].contains(Regex("""\D""")))
                 sum += str[0].toInt()
             else
                 throw IllegalArgumentException()
             for (i in 2..str.lastIndex step 2)
-                if (str[i].contains(Regex("""[^0-9]""")) && str[i - 1].contains(Regex("""[^+-]""")))
+                if (str[i].contains(Regex("""\D""")) && str[i - 1].contains(Regex("""[^+-]""")))
                     throw IllegalArgumentException()
                 else
                     sum += (str[i - 1] + str[i]).toInt()
             return sum
         }
-
     }
     throw IllegalArgumentException()
 }
