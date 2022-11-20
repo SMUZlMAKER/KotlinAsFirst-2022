@@ -265,54 +265,32 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    /*var max = 0.0 to ""
-    var i = 0
-    while (i < description.length) {
-        if (description[i].isDigit()) {
-            val tmp = StringBuilder()
-            var j = 0
-            while (i + j != description.length && description[i + j] != ';') {
-                tmp.append(description[i + j])
-                j++
-            }
-            if ((tmp.toString().toDoubleOrNull() ?: return "") >= max.first) {
-                val tmp2 = StringBuilder()
-                var k = 0
-                while (i - 2 - k != -1 && description[i - 2 - k] != ' ') {
-                    tmp2.append(description[i - 2 - k])
-                    k++
-                }
-                max = tmp.toString().toDouble() to tmp2.toString().reversed()
-            }
-            i += j
-        }
-        i++
-    }
-    return max.second*/
     var max = 0.0 to ""
     var i = description.lastIndex
     while (i > 0) {
         if (description[i].isDigit()) {
             val tmp = StringBuilder()
-            var j = 0
-            while (/*i - j != -1 && */description[i - j] != ' ') {
-                tmp.append(description[i - j])
-                j++
+            while (i != -1 && description[i] != ' ') {
+                tmp.append(description[i])
+                i--
             }
+            i--
             if ((tmp.toString().reversed().toDoubleOrNull() ?: return "") >= max.first) {
-                i-=j+1
                 val tmp2 = StringBuilder()
-                var k = 0
-                while (i - k != -1 && description[i - k] != ' ') {
-                    tmp2.append(description[i - k])
-                    k++
+                while (i != -1 && description[i] != ' ') {
+                    tmp2.append(description[i])
+                    i--
                 }
                 max = tmp.toString().reversed().toDouble() to tmp2.toString().reversed()
-                i -= k
-            }
-
-        }
-        i--
+            } else
+                while (i != -1 && description[i] != ' ')
+                    i--
+            if (i != -1 && description[i - 1] == ';')
+                i -= 2
+            else
+                break
+        } else
+            break
     }
     return max.second
 }
