@@ -221,8 +221,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var min = -1.0
-    var res: String?
-    res = null
+    var res: String? = null
     for ((key, value) in stuff)
         if (value.first == kind && (value.second <= min || min == -1.0)) {
             min = value.second
@@ -273,15 +272,8 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean {
-    for (i in words.indices)
-        for (j in i + 1 until words.size)
-            if (words[i].length == words[j].length)
-                if (words[i].toList().sorted() == words[j].toList().sorted())
-                /*if (words[i].toSet() == words[j].toSet())*/
-                    return true
-    return false
-}
+fun hasAnagrams(words: List<String>): Boolean =
+    words.map { it.toList().sorted().joinToString("") }.toSet().size != words.size
 
 /**
  * Сложная (5 баллов)

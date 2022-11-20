@@ -2,8 +2,8 @@
 
 package lesson6.task1
 
-import lesson7.task1.markdownToHtmlSimple
-import kotlin.math.exp
+import java.lang.StringBuilder
+import lesson2.task2.daysInMonth
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -100,7 +100,7 @@ fun dateStrToDigit(str: String): String {
         else -> return ""
     }
     return if (numbers[2] > 0 && numbers[1] in 1..12 &&
-        numbers[0] in 1..lesson2.task2.daysInMonth(numbers[1], numbers[2])
+        numbers[0] in 1..daysInMonth(numbers[1], numbers[2])
     )
         String.format("%02d.%02d.%d", numbers[0], numbers[1], numbers[2])
     else
@@ -121,7 +121,7 @@ fun dateDigitToStr(digital: String): String {
     val match = Regex("""(\d\d).(\d\d).(\d+)""").matchEntire(digital) ?: return ""
     if (match.groupValues[3].toInt() > 0 && match.groupValues[2].toInt() in 1..12 &&
         match.groupValues[1].toInt() in 1..
-        lesson2.task2.daysInMonth(match.groupValues[2].toInt(), match.groupValues[3].toInt())
+        daysInMonth(match.groupValues[2].toInt(), match.groupValues[3].toInt())
     )
         return match.groupValues[1].toInt().toString() + " " + when (match.groupValues[2]) {
             "01" -> "января"
@@ -173,7 +173,7 @@ fun flattenPhoneNumber(phone: String): String =
  */
 fun bestLongJump(jumps: String): Int {
     var max = -1
-     if(!jumps.contains(Regex("""[^\d% -]""")) && jumps.isNotEmpty()) {
+    if (!jumps.contains(Regex("""[^\d% -]""")) && jumps.isNotEmpty()) {
         val match = Regex("""[% -]*(\d+)""").findAll(jumps)
         match.forEach { if (it.groupValues.last().toInt() >= max) max = it.groupValues.last().toInt() }
     }
@@ -265,14 +265,30 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    if (description.isNotEmpty()) {
-        val products = description.filter { it != ';' }.split(" ")
-        val prod = mutableMapOf<Double, String>()
-        for (i in 0..products.size - 2 step 2)
-            prod[products[i + 1].toDouble()] = products[i]
-        return prod[prod.keys.max()] ?: ""
+    var max = 0.0 to ""
+    var i = 0
+    while (i < description.length) {
+        if (description[i].isDigit()) {
+            val tmp = StringBuilder()
+            var j = 0
+            while (description[i + j] != ';' && i + j != description.lastIndex) {
+                tmp.append(description[i + j])
+                j++
+            }
+            if ((tmp.toString().toDoubleOrNull() ?: return "") > max.first) {
+                val tmp2 = StringBuilder()
+                var k = 0
+                while (i - 2 - k != -1 && description[i - 2 - k] != ' ') {
+                    tmp2.append(description[i - 2 - k])
+                    k++
+                }
+                max = tmp.toString().toDouble() to tmp2.toString().reversed()
+            }
+            i += j
+        }
+        i++
     }
-    return ""
+    return max.second
 }
 
 /**
@@ -324,4 +340,72 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    var open = 0
+    var close = 0
+    commands.forEach {
+        when (it) {
+            '[' -> open++
+            ']' -> close++
+            '>', '<', '+', '-', ' ' -> {}
+            else -> throw IllegalArgumentException("Illegal char")
+        }
+    }
+    if (open != close)
+        throw IllegalArgumentException("Bracket has no pair")
+    var i = cells / 2
+    val res = MutableList(cells) { 0 }
+    var j = 0
+    var countcom = 0
+    while (j < commands.length && countcom < limit) {
+        countcom++
+        when (commands[j]) {
+            ' ' -> {}
+            '>' -> {
+                i++
+                if (i !in res.indices)
+                    throw IllegalStateException("Going beyond borders")
+            }
+
+            '<' -> {
+                i--
+                if (i !in res.indices)
+                    throw IllegalStateException("Going beyond borders")
+            }
+
+            '+' -> res[i]++
+            '-' -> res[i]--
+            '[' -> if (res[i] == 0) {
+                var brackets = 1
+                var k = 1
+                while (j + k <= commands.lastIndex && brackets != 0) {
+                    when (commands[j + k]) {
+                        '[' -> brackets++
+                        ']' -> brackets--
+                        else -> {}
+                    }
+                    k++
+                }
+                j += k - 1
+            }
+
+            ']' -> if (res[i] != 0) {
+                var brackets = 1
+                var k = 1
+                while (j - k > 0 && brackets != 0) {
+                    when (commands[j - k]) {
+                        '[' -> brackets--
+                        ']' -> brackets++
+                        else -> {}
+                    }
+                    k++
+                }
+                j -= k - 1
+            }
+
+            else -> {}
+        }
+        j++
+    }
+    return res
+}
