@@ -271,11 +271,11 @@ fun mostExpensive(description: String): String {
         if (description[i].isDigit()) {
             val tmp = StringBuilder()
             var j = 0
-            while (description[i + j] != ';' && i + j != description.lastIndex) {
+            while (i + j != description.length && description[i + j] != ';') {
                 tmp.append(description[i + j])
                 j++
             }
-            if ((tmp.toString().toDoubleOrNull() ?: return "") > max.first) {
+            if ((tmp.toString().toDoubleOrNull() ?: return "") >= max.first) {
                 val tmp2 = StringBuilder()
                 var k = 0
                 while (i - 2 - k != -1 && description[i - 2 - k] != ' ') {
