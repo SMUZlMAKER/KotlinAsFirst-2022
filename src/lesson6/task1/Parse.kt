@@ -265,7 +265,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    var max = 0.0 to ""
+    /*var max = 0.0 to ""
     var i = 0
     while (i < description.length) {
         if (description[i].isDigit()) {
@@ -287,6 +287,32 @@ fun mostExpensive(description: String): String {
             i += j
         }
         i++
+    }
+    return max.second*/
+    var max = 0.0 to ""
+    var i = description.lastIndex
+    while (i > 0) {
+        if (description[i].isDigit()) {
+            val tmp = StringBuilder()
+            var j = 0
+            while (/*i - j != -1 && */description[i - j] != ' ') {
+                tmp.append(description[i - j])
+                j++
+            }
+            if ((tmp.toString().reversed().toDoubleOrNull() ?: return "") >= max.first) {
+                i-=j+1
+                val tmp2 = StringBuilder()
+                var k = 0
+                while (i - k != -1 && description[i - k] != ' ') {
+                    tmp2.append(description[i - k])
+                    k++
+                }
+                max = tmp.toString().reversed().toDouble() to tmp2.toString().reversed()
+                i -= k
+            }
+
+        }
+        i--
     }
     return max.second
 }
@@ -346,13 +372,17 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     commands.forEach {
         when (it) {
             '[' -> open++
-            ']' -> close++
+            ']' -> {
+                close++
+                if (close > open) throw IllegalArgumentException("Unpaired closing bracket")
+            }
+
             '>', '<', '+', '-', ' ' -> {}
             else -> throw IllegalArgumentException("Illegal char")
         }
     }
     if (open != close)
-        throw IllegalArgumentException("Bracket has no pair")
+        throw IllegalArgumentException("Unpaired opening bracket")
     var i = cells / 2
     val res = MutableList(cells) { 0 }
     var j = 0
