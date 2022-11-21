@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.util.InputMismatchException
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +64,9 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    File(inputName).forEachLine { if (it.getOrNull(0) != '_') writer.appendLine(it) }
+    writer.close()
 }
 
 /**
@@ -75,7 +78,25 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    fun count(string: String, word: String): Int {
+        var index: Int? = null
+        var count = -1
+        while (index != -1) {
+            index = string.indexOf(word, (index ?: -1) + 1, true)
+            count++
+        }
+        return count
+    }
+
+    val res = mutableMapOf<String, Int>()
+    File(inputName).forEachLine { line ->
+        substrings.forEach {
+            res[it] = (res[it] ?: 0) + count(line, it)
+        }
+    }
+    return res
+}
 
 
 /**
