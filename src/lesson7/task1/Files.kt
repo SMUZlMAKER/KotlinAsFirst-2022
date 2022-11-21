@@ -91,7 +91,7 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
 
     val res = mutableMapOf<String, Int>()
     File(inputName).forEachLine { line ->
-        substrings.forEach {
+        substrings.toSet().forEach {
             res[it] = (res[it] ?: 0) + count(line, it)
         }
     }
