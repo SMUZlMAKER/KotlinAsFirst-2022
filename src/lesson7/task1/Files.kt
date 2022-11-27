@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.lang.StringBuilder
 import java.util.InputMismatchException
 
 // Урок 7: работа с файлами
@@ -113,7 +114,21 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val letters = mapOf('ы' to 'и', 'Ы' to 'И', 'я' to 'а', 'Я' to 'А', 'ю' to 'у', 'Ю' to 'У')
+    File(inputName).forEachLine { line: String ->
+        val tmp = StringBuilder()
+        tmp.append(line)
+        line.forEachIndexed { index, it ->
+            if (index + 1 != line.length && (it.lowercaseChar() == 'ж' || it.lowercaseChar() == 'ч' ||
+                        it.lowercaseChar() == 'ш' || it.lowercaseChar() == 'щ') && line[index + 1] in letters.keys
+            ) {
+                tmp[index + 1] = letters[line[index + 1]]!!
+            }
+        }
+        writer.appendLine(tmp)
+    }
+    writer.close()
 }
 
 /**
