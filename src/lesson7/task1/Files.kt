@@ -316,8 +316,61 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    writer.appendLine("<html><body><p>")
+    File(inputName).forEachLine { line ->
+        val tmp = StringBuilder()
+        if (line.isEmpty())
+            tmp.append("</p><p>")
+        else {
+            var index = 0
+            var star = false
+            var doublestar = false
+            var tilda = false
+            while (index < line.length) {
+                when (line[index]) {
+                    '*' ->
+                        if (line[index + 1] == '*') {
+                            doublestar = if (doublestar) {
+                                tmp.append("</b>")
+                                false
+                            } else {
+                                tmp.append("<b>")
+                                true
+                            }
+                            index++
+                        } else
+                            star = if (star) {
+                                tmp.append("</i>")
+                                false
+                            } else {
+                                tmp.append("<i>")
+                                true
+                            }
+
+                    '~' ->
+                        if (line[index + 1] == '~') {
+                            tilda = if (tilda) {
+                                tmp.append("</s>")
+                                false
+                            } else {
+                                tmp.append("<s>")
+                                true
+                            }
+                            index++
+                        }
+
+                    else -> tmp.append(line[index])
+                }
+                index++
+            }
+        }
+        writer.appendLine(tmp)
+    }
+    writer.appendLine("</p></body></html>")
+    writer.close()
 }
+
 
 /**
  * Сложная (23 балла)
