@@ -327,8 +327,10 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         if (line.isEmpty())
             space = true
         else {
-            if(space)
+            if (space) {
                 tmp.append("</p><p>")
+                space = false
+            }
             var index = 0
             while (index < line.length) {
                 when (line[index]) {
