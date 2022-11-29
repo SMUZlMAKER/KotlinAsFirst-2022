@@ -323,12 +323,11 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var tilda = false
     var space = false
     File(inputName).forEachLine { line ->
-        val tmp = StringBuilder()
-        if (line.isEmpty())
+        if (line.matches(Regex("""\s*""")))
             space = true
         else {
             if (space) {
-                tmp.append("</p><p>")
+                writer.append("</p><p>")
                 space = false
             }
             var index = 0
@@ -337,41 +336,40 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     '*' ->
                         if (index + 1 != line.length && line[index + 1] == '*') {
                             doublestar = if (doublestar) {
-                                tmp.append("</b>")
+                                writer.append("</b>")
                                 false
                             } else {
-                                tmp.append("<b>")
+                                writer.append("<b>")
                                 true
                             }
                             index++
                         } else
                             star = if (star) {
-                                tmp.append("</i>")
+                                writer.append("</i>")
                                 false
                             } else {
-                                tmp.append("<i>")
+                                writer.append("<i>")
                                 true
                             }
 
                     '~' ->
                         if (index + 1 != line.length && line[index + 1] == '~') {
                             tilda = if (tilda) {
-                                tmp.append("</s>")
+                                writer.append("</s>")
                                 false
                             } else {
-                                tmp.append("<s>")
+                                writer.append("<s>")
                                 true
                             }
                             index++
                         } else
-                            tmp.append(line[index])
+                            writer.append(line[index])
 
-                    else -> tmp.append(line[index])
+                    else -> writer.append(line[index])
                 }
                 index++
             }
         }
-        writer.appendLine(tmp)
     }
     writer.appendLine("</p></body></html>")
     writer.close()
