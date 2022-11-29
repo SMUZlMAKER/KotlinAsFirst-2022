@@ -318,19 +318,19 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     writer.appendLine("<html><body><p>")
+    var star = false
+    var doublestar = false
+    var tilda = false
     File(inputName).forEachLine { line ->
         val tmp = StringBuilder()
         if (line.isEmpty())
             tmp.append("</p><p>")
         else {
             var index = 0
-            var star = false
-            var doublestar = false
-            var tilda = false
             while (index < line.length) {
                 when (line[index]) {
                     '*' ->
-                        if (line[index + 1] == '*') {
+                        if (index + 1 != line.length && line[index + 1] == '*') {
                             doublestar = if (doublestar) {
                                 tmp.append("</b>")
                                 false
@@ -349,7 +349,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                             }
 
                     '~' ->
-                        if (line[index + 1] == '~') {
+                        if (index + 1 != line.length && line[index + 1] == '~') {
                             tilda = if (tilda) {
                                 tmp.append("</s>")
                                 false
@@ -358,7 +358,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                                 true
                             }
                             index++
-                        }
+                        } else
+                            tmp.append(line[index])
 
                     else -> tmp.append(line[index])
                 }
@@ -470,7 +471,52 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    /*val writer = File(outputName).bufferedWriter()
+    writer.appendLine("<html><body><p>")
+    var prevcountspace=0
+    File(inputName).forEachLine { line ->
+        var index = 0
+        var countspace=0
+        val tmp=StringBuilder()
+        while (index < line.length) {
+            when(line[index]){
+                ' '->countspace++
+                '*'->{
+                    while(countspace!=prevcountspace){
+                        if(countspace>prevcountspace){
+                            tmp.append("<ol>")
+                            countspace-=4
+                        }else{
+                            tmp.append("</ol>")
+                            countspace+=4
+                        }
+                    }
+                    prevcountspace=countspace
+                    tmp.append("<li>${line.substring(2)}</li>")
+                    writer.appendLine(tmp)
+                    break
+                }
+                in '0'..'9'->{
+                    while(countspace!=prevcountspace){
+                        if(countspace>prevcountspace){
+                            tmp.append("<ul>")
+                            countspace-=4
+                        }else{
+                            tmp.append("</ul>")
+                            countspace+=4
+                        }
+                    }
+                    prevcountspace=countspace
+                    tmp.append("<li>${line.substring(line.indexOf(' ')+1)}</li>")
+                    writer.appendLine(tmp)
+                    break
+                }
+            }
+            index++
+        }
+    }
+    writer.appendLine("</p></body></html>")
+    writer.close()*/TODO()
 }
 
 /**
