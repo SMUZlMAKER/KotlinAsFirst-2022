@@ -321,11 +321,14 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var star = false
     var doublestar = false
     var tilda = false
+    var space = false
     File(inputName).forEachLine { line ->
         val tmp = StringBuilder()
         if (line.isEmpty())
-            tmp.append("</p><p>")
+            space = true
         else {
+            if(space)
+                tmp.append("</p><p>")
             var index = 0
             while (index < line.length) {
                 when (line[index]) {
