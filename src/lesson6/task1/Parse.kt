@@ -173,7 +173,7 @@ fun flattenPhoneNumber(phone: String): String =
  */
 fun bestLongJump(jumps: String): Int {
     var max = -1
-    if (!jumps.contains(Regex("""[^\d% -]""")) && jumps.isNotEmpty()) {
+    if (jumps.isNotEmpty() && !jumps.contains(Regex("""[^\d% -]"""))) {
         val match = Regex("""[% -]*(\d+)""").findAll(jumps)
         match.forEach { if (it.groupValues.last().toInt() >= max) max = it.groupValues.last().toInt() }
     }
@@ -192,17 +192,17 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    if (jumps.isNotEmpty()) {
-        val num = mutableListOf<Int>()
-        val str = jumps.split(" ")
-        str.forEachIndexed { i, it ->
-            if (it.matches(Regex("""\d+""")) &&
-                str[i + 1].contains("+") && !str[i + 1].contains(Regex("""[^%+-]"""))
-            ) num.add(it.toInt())
-        }
-        if (num.size > 0)
-            return num.max()
+    if (jumps.isEmpty())
+        return -1
+    val num = mutableListOf<Int>()
+    val str = jumps.split(" ")
+    str.forEachIndexed { i, it ->
+        if (it.matches(Regex("""\d+""")) &&
+            str[i + 1].contains("+") && !str[i + 1].contains(Regex("""[^%+-]"""))
+        ) num.add(it.toInt())
     }
+    if (num.size > 0)
+        return num.max()
     return -1
 }
 
@@ -216,22 +216,23 @@ fun bestHighJump(jumps: String): Int {
  * При нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    if (expression.isNotEmpty()) {
-        var sum = 0
-        val str = expression.split(Regex("""\s+"""))
-        if (str.size % 2 == 1) {
-            if (!str[0].contains(Regex("""\D""")))
-                sum += str[0].toInt()
-            else
+    if (expression.isEmpty())
+        throw IllegalArgumentException()
+    var sum = 0
+    val str = expression.split(Regex("""\s+"""))
+    if (str.size % 2 == 1) {
+        if (!str[0].contains(Regex("""\D""")))
+            sum += str[0].toInt()
+        else
+            throw IllegalArgumentException()
+        for (i in 2..str.lastIndex step 2)
+            if (str[i].contains(Regex("""\D""")) && str[i - 1].contains(Regex("""[^+-]""")))
                 throw IllegalArgumentException()
-            for (i in 2..str.lastIndex step 2)
-                if (str[i].contains(Regex("""\D""")) && str[i - 1].contains(Regex("""[^+-]""")))
-                    throw IllegalArgumentException()
-                else
-                    sum += (str[i - 1] + str[i]).toInt()
-            return sum
-        }
+            else
+                sum += (str[i - 1] + str[i]).toInt()
+        return sum
     }
+
     throw IllegalArgumentException()
 }
 
@@ -245,11 +246,11 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    if (str.isNotEmpty()) {
-        val match = Regex("""([^ ]+)\s\1""").find(str.lowercase())
-        if (match != null)
-            return match.range.first
-    }
+    if (str.isEmpty())
+        return -1
+    val match = Regex("""([^ ]+)\s\1""").find(str.lowercase())
+    if (match != null)
+        return match.range.first
     return -1
 }
 
@@ -265,34 +266,13 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше нуля либо равны нулю.
  */
 fun mostExpensive(description: String): String {
-    var max = 0.0 to ""
-    var i = description.lastIndex
-    while (i > 0) {
-        if (description[i].isDigit()) {
-            val tmp = StringBuilder()
-            while (i != -1 && description[i] != ' ') {
-                tmp.append(description[i])
-                i--
-            }
-            i--
-            if ((tmp.toString().reversed().toDoubleOrNull() ?: return "") >= max.first) {
-                val tmp2 = StringBuilder()
-                while (i != -1 && description[i] != ' ') {
-                    tmp2.append(description[i])
-                    i--
-                }
-                max = tmp.toString().reversed().toDouble() to tmp2.toString().reversed()
-            } else
-                while (i != -1 && description[i] != ' ')
-                    i--
-            if (i != -1 && description[i - 1] == ';')
-                i -= 2
-            else
-                break
-        } else
-            break
-    }
-    return max.second
+    if (description.isEmpty())
+        return ""
+    val products = description.split(Regex(""";? """))
+    val prod = mutableMapOf<Double, String>()
+    for (i in 0..products.size - 2 step 2)
+        prod[products[i + 1].toDouble()] = products[i]
+    return prod[prod.keys.max()] ?: ""
 }
 
 /**
