@@ -497,10 +497,10 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
                 '*'->{
                     while(countspace!=prevcountspace){
                         if(countspace>prevcountspace){
-                            tmp.append("<ol>")
+                            tmp.append("<ul>")
                             countspace-=4
                         }else{
-                            tmp.append("</ol>")
+                            tmp.append("</ul>")
                             countspace+=4
                         }
                     }
@@ -512,10 +512,10 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
                 in '0'..'9'->{
                     while(countspace!=prevcountspace){
                         if(countspace>prevcountspace){
-                            tmp.append("<ul>")
+                            tmp.append("<ol>")
                             countspace-=4
                         }else{
-                            tmp.append("</ul>")
+                            tmp.append("</ol>")
                             countspace+=4
                         }
                     }
@@ -529,7 +529,81 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
         }
     }
     writer.appendLine("</p></body></html>")
-    writer.close()*/TODO()
+    writer.close()*/
+    val writer = File(outputName).bufferedWriter()
+    writer.appendLine("<html><body><p>")
+    val nesting = mutableSetOf<String>()
+    var countspace = 0
+    File(inputName).forEachLine { line ->
+        var index = 0
+        while(index<line.length){
+            when(line[index]){
+                ' '-> countspace++
+                '*'->{
+                    if(nesting.isEmpty() || countspace/4!= nesting.last().first().digitToInt())
+                        if("${countspace/4}<ul>" in nesting) {
+                            /*nesting.remove("${countspace / 4}<ul>")
+                            writer.appendLine("</li></ul>")*/
+                            while(nesting.isNotEmpty() && countspace/4< nesting.last().first().digitToInt()){
+                                writer.appendLine("</li></${nesting.last().drop(2)}")
+                                nesting.remove(nesting.last())
+                            }
+                            writer.appendLine("</li><li>")
+                        }else {
+                            nesting.add("${countspace / 4}<ul>")
+                            writer.appendLine("<ul><li>")
+                        }
+                    else
+                        writer.appendLine("</li><li>")
+                    countspace = 0
+                    var i = line.indexOf(' ',index)
+                    while(i < line.length && line[i] != '\n') {
+                        writer.appendLine(line[i])
+                        i++
+                    }
+                    index=i
+                }
+
+                in '0'..'9'->{
+                    if(nesting.isEmpty() || countspace/4!= nesting.last().first().digitToInt())
+                        if("${countspace/4}<ol>" in nesting) {
+                            /*nesting.remove("${countspace / 4}<ol>")
+                            writer.appendLine("</li></ol>")*/
+                            while(nesting.isNotEmpty() && countspace/4< nesting.last().first().digitToInt()){
+                                writer.appendLine("</li></${nesting.last().drop(2)}")
+                                nesting.remove(nesting.last())
+                            }
+                            writer.appendLine("</li><li>")
+                        }else {
+                            nesting.add("${countspace / 4}<ol>")
+                            writer.appendLine("<ol><li>")
+                        }
+                    else
+                        writer.appendLine("</li><li>")
+                    countspace = 0
+                    /*var i = 2
+                    while(index + i < line.length && line[index + i] != '\n') {
+                        writer.appendLine(line[index+i])
+                        i++
+                    }
+                    index+=i*/
+                    var i = line.indexOf(' ',index)
+                    while(i < line.length && line[i] != '\n') {
+                        writer.appendLine(line[i])
+                        i++
+                    }
+                    index=i
+                }
+            }
+            index++
+        }
+    }
+    while(nesting.isNotEmpty()){
+        writer.appendLine("</li></${nesting.last().drop(2)}")
+        nesting.remove(nesting.last())
+    }
+    writer.appendLine("</p></body></html>")
+    writer.close()
 }
 
 /**
