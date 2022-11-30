@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import java.io.BufferedWriter
 import java.io.File
 import java.lang.StringBuilder
 import java.util.InputMismatchException
@@ -338,7 +339,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             while (index < line.length) {
                 when (line[index]) {
                     '*' ->
-                        if (index + 1 != line.length && line[index + 1] == '*') {
+                        if (index + 1 <= line.length && line[index + 1] == '*') {
                             doublestar = if (doublestar) {
                                 tmp.append("</b>")
                                 false
@@ -357,7 +358,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                             }
 
                     '~' ->
-                        if (index + 1 != line.length && line[index + 1] == '~') {
+                        if (index + 1 <= line.length && line[index + 1] == '~') {
                             tilda = if (tilda) {
                                 tmp.append("</s>")
                                 false
@@ -484,121 +485,65 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    /*val writer = File(outputName).bufferedWriter()
-    writer.appendLine("<html><body><p>")
-    var prevcountspace=0
-    File(inputName).forEachLine { line ->
-        var index = 0
-        var countspace=0
-        val tmp=StringBuilder()
-        while (index < line.length) {
-            when(line[index]){
-                ' '->countspace++
-                '*'->{
-                    while(countspace!=prevcountspace){
-                        if(countspace>prevcountspace){
-                            tmp.append("<ul>")
-                            countspace-=4
-                        }else{
-                            tmp.append("</ul>")
-                            countspace+=4
-                        }
-                    }
-                    prevcountspace=countspace
-                    tmp.append("<li>${line.substring(2)}</li>")
-                    writer.appendLine(tmp)
-                    break
-                }
-                in '0'..'9'->{
-                    while(countspace!=prevcountspace){
-                        if(countspace>prevcountspace){
-                            tmp.append("<ol>")
-                            countspace-=4
-                        }else{
-                            tmp.append("</ol>")
-                            countspace+=4
-                        }
-                    }
-                    prevcountspace=countspace
-                    tmp.append("<li>${line.substring(line.indexOf(' ')+1)}</li>")
-                    writer.appendLine(tmp)
-                    break
-                }
-            }
-            index++
-        }
-    }
-    writer.appendLine("</p></body></html>")
-    writer.close()*/
     val writer = File(outputName).bufferedWriter()
     writer.appendLine("<html><body><p>")
     val nesting = mutableSetOf<String>()
     var countspace = 0
     File(inputName).forEachLine { line ->
         var index = 0
-        while(index<line.length){
-            when(line[index]){
-                ' '-> countspace++
-                '*'->{
-                    if(nesting.isEmpty() || countspace/4!= nesting.last().first().digitToInt())
-                        if("${countspace/4}<ul>" in nesting) {
-                            /*nesting.remove("${countspace / 4}<ul>")
-                            writer.appendLine("</li></ul>")*/
-                            while(nesting.isNotEmpty() && countspace/4< nesting.last().first().digitToInt()){
+        while (index < line.length) {
+            when (line[index]) {
+                ' ' -> countspace++
+                '*' -> {
+                    if (nesting.isEmpty() || countspace / 4 != nesting.last().first().digitToInt())
+                        if ("${countspace / 4}<ul>" in nesting) {
+                            while (nesting.isNotEmpty() && countspace / 4 < nesting.last().first().digitToInt()) {
                                 writer.appendLine("</li></${nesting.last().drop(2)}")
                                 nesting.remove(nesting.last())
                             }
                             writer.appendLine("</li><li>")
-                        }else {
+                        } else {
                             nesting.add("${countspace / 4}<ul>")
                             writer.appendLine("<ul><li>")
                         }
                     else
                         writer.appendLine("</li><li>")
                     countspace = 0
-                    var i = line.indexOf(' ',index)
-                    while(i < line.length && line[i] != '\n') {
+                    var i = line.indexOf(' ', index)
+                    while (i < line.length && line[i] != '\n') {
                         writer.appendLine(line[i])
                         i++
                     }
-                    index=i
+                    index = i
                 }
 
-                in '0'..'9'->{
-                    if(nesting.isEmpty() || countspace/4!= nesting.last().first().digitToInt())
-                        if("${countspace/4}<ol>" in nesting) {
-                            /*nesting.remove("${countspace / 4}<ol>")
-                            writer.appendLine("</li></ol>")*/
-                            while(nesting.isNotEmpty() && countspace/4< nesting.last().first().digitToInt()){
+                in '0'..'9' -> {
+                    if (nesting.isEmpty() || countspace / 4 != nesting.last().first().digitToInt())
+                        if ("${countspace / 4}<ol>" in nesting) {
+                            while (nesting.isNotEmpty() && countspace / 4 < nesting.last().first().digitToInt()) {
                                 writer.appendLine("</li></${nesting.last().drop(2)}")
                                 nesting.remove(nesting.last())
                             }
                             writer.appendLine("</li><li>")
-                        }else {
+                        } else {
                             nesting.add("${countspace / 4}<ol>")
                             writer.appendLine("<ol><li>")
                         }
                     else
                         writer.appendLine("</li><li>")
                     countspace = 0
-                    /*var i = 2
-                    while(index + i < line.length && line[index + i] != '\n') {
-                        writer.appendLine(line[index+i])
-                        i++
-                    }
-                    index+=i*/
-                    var i = line.indexOf(' ',index)
-                    while(i < line.length && line[i] != '\n') {
+                    var i = line.indexOf(' ', index)
+                    while (i < line.length && line[i] != '\n') {
                         writer.appendLine(line[i])
                         i++
                     }
-                    index=i
+                    index = i
                 }
             }
             index++
         }
     }
-    while(nesting.isNotEmpty()){
+    while (nesting.isNotEmpty()) {
         writer.appendLine("</li></${nesting.last().drop(2)}")
         nesting.remove(nesting.last())
     }
@@ -614,8 +559,197 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
  * - Списки, отделённые друг от друга пустой строкой, являются разными и должны оказаться в разных параграфах выходного файла.
  *
  */
+fun simple(writer: BufferedWriter,lines :List<String>):Int {
+    var star = false
+    var doublestar = false
+    var tilda = false
+    var tmp = StringBuilder()
+    var crutch = true
+    var master = 0
+    while (master < lines.size && (lines[master].isEmpty() || (lines[master].trim()
+            .first() != '*' && lines[master].trim().first() !in '0'..'9'))
+    ) {
+        if (lines[master].matches(Regex("""[ \t]*"""))) {
+            if (tmp.isNotEmpty()) {
+                tmp.append("</p>")
+                writer.appendLine(tmp)
+                tmp = StringBuilder()
+            }
+        } else {
+            crutch = false
+            if (tmp.isEmpty())
+                tmp.append("<p>")
+            var index = 0
+            while (index < lines[master].length) {
+                when (lines[master][index]) {
+                    '*' ->
+                        if (index + 1 <= lines[master].length && lines[master][index + 1] == '*') {
+                            doublestar = if (doublestar) {
+                                tmp.append("</b>")
+                                false
+                            } else {
+                                tmp.append("<b>")
+                                true
+                            }
+                            index++
+                        } else
+                            star = if (star) {
+                                tmp.append("</i>")
+                                false
+                            } else {
+                                tmp.append("<i>")
+                                true
+                            }
+
+                    '~' ->
+                        if (index + 1 <= lines[master].length && lines[master][index + 1] == '~') {
+                            tilda = if (tilda) {
+                                tmp.append("</s>")
+                                false
+                            } else {
+                                tmp.append("<s>")
+                                true
+                            }
+                            index++
+                        } else
+                            tmp.append(lines[master][index])
+
+                    else -> tmp.append(lines[master][index])
+                }
+                index++
+            }
+        }
+        master++
+    }
+    if (tmp.isNotEmpty()) {
+        writer.appendLine(tmp)
+        writer.appendLine("</p>")
+    }
+    if (crutch)
+        writer.appendLine("<p></p>")
+    return master
+}
+
+fun list(writer: BufferedWriter,lines :List<String>):Int {
+    fun element(master: Int, index: Int): Int {
+        var i = lines[master].indexOf(' ', index)
+        var star = false
+        var doublestar = false
+        var tilda = false
+        val tmp = StringBuilder()
+        while (i < lines[master].length) {
+            when (lines[master][i]) {
+                '*' ->
+                    if (i + 1 <= lines[master].length && lines[master][i + 1] == '*') {
+                        doublestar = if (doublestar) {
+                            tmp.append("</b>")
+                            false
+                        } else {
+                            tmp.append("<b>")
+                            true
+                        }
+                        i++
+                    } else
+                        star = if (star) {
+                            tmp.append("</i>")
+                            false
+                        } else {
+                            tmp.append("<i>")
+                            true
+                        }
+
+                '~' ->
+                    if (i + 1 <= lines[master].length && lines[master][i + 1] == '~') {
+                        tilda = if (tilda) {
+                            tmp.append("</s>")
+                            false
+                        } else {
+                            tmp.append("<s>")
+                            true
+                        }
+                        i++
+                    } else
+                        tmp.append(lines[master][i])
+
+                else -> tmp.append(lines[master][i])
+            }
+            i++
+        }
+        writer.appendLine(tmp)
+        return i
+    }
+    writer.appendLine("<p>")
+    val nesting = mutableSetOf<String>()
+    var countspace = 0
+    var master = 0
+    while (master < lines.size && (lines[master].trim().first() == '*' || lines[master].trim().first() in '0'..'9')) {
+        var index = 0
+        while (index < lines[master].length) {
+            when (lines[master][index]) {
+                ' ' -> countspace++
+                '*' -> {
+                    if (nesting.isEmpty() || countspace / 4 != nesting.last().first().digitToInt())
+                        if ("${countspace / 4}<ul>" in nesting) {
+                            while (nesting.isNotEmpty() && countspace / 4 < nesting.last().first().digitToInt()) {
+                                writer.appendLine("</li></${nesting.last().drop(2)}")
+                                nesting.remove(nesting.last())
+                            }
+                            writer.appendLine("</li><li>")
+                        } else {
+                            nesting.add("${countspace / 4}<ul>")
+                            writer.appendLine("<ul><li>")
+                        }
+                    else
+                        writer.appendLine("</li><li>")
+                    countspace = 0
+                    index = element(master, index)
+                }
+
+                in '0'..'9' -> {
+                    if (nesting.isEmpty() || countspace / 4 != nesting.last().first().digitToInt())
+                        if ("${countspace / 4}<ol>" in nesting) {
+                            while (nesting.isNotEmpty() && countspace / 4 < nesting.last().first().digitToInt()) {
+                                writer.appendLine("</li></${nesting.last().drop(2)}")
+                                nesting.remove(nesting.last())
+                            }
+                            writer.appendLine("</li><li>")
+                        } else {
+                            nesting.add("${countspace / 4}<ol>")
+                            writer.appendLine("<ol><li>")
+                        }
+                    else
+                        writer.appendLine("</li><li>")
+                    countspace = 0
+                    index = element(master, index)
+
+                }
+            }
+            index++
+        }
+        master++
+    }
+
+    while (nesting.isNotEmpty()) {
+        writer.appendLine("</li></${nesting.last().drop(2)}")
+        nesting.remove(nesting.last())
+    }
+    writer.appendLine("</p>")
+    return master
+}
 fun markdownToHtml(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    writer.appendLine("<html><body>")
+    val text = File(inputName).readLines()
+    var master = 0
+    while (master < text.size) {
+        if (text[master].first() == '*' || text[master].first() in '0'..'9')
+            master = list(writer, text.subList(master, text.size))
+        else
+            master = simple(writer, text.subList(master, text.size))
+        master++
+    }
+    writer.appendLine("</body></html>")
+    writer.close()
 }
 
 /**
