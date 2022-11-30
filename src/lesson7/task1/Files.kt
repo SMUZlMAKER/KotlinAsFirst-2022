@@ -339,7 +339,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             while (index < line.length) {
                 when (line[index]) {
                     '*' ->
-                        if (index + 1 <= line.length && line[index + 1] == '*') {
+                        if (index + 1 < line.length && line[index + 1] == '*') {
                             doublestar = if (doublestar) {
                                 tmp.append("</b>")
                                 false
@@ -358,7 +358,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                             }
 
                     '~' ->
-                        if (index + 1 <= line.length && line[index + 1] == '~') {
+                        if (index + 1 < line.length && line[index + 1] == '~') {
                             tilda = if (tilda) {
                                 tmp.append("</s>")
                                 false
@@ -583,7 +583,7 @@ fun simple(writer: BufferedWriter,lines :List<String>):Int {
             while (index < lines[master].length) {
                 when (lines[master][index]) {
                     '*' ->
-                        if (index + 1 <= lines[master].length && lines[master][index + 1] == '*') {
+                        if (index + 1 < lines[master].length && lines[master][index + 1] == '*') {
                             doublestar = if (doublestar) {
                                 tmp.append("</b>")
                                 false
@@ -602,7 +602,7 @@ fun simple(writer: BufferedWriter,lines :List<String>):Int {
                             }
 
                     '~' ->
-                        if (index + 1 <= lines[master].length && lines[master][index + 1] == '~') {
+                        if (index + 1 < lines[master].length && lines[master][index + 1] == '~') {
                             tilda = if (tilda) {
                                 tmp.append("</s>")
                                 false
@@ -640,7 +640,7 @@ fun list(writer: BufferedWriter,lines :List<String>):Int {
         while (i < lines[master].length) {
             when (lines[master][i]) {
                 '*' ->
-                    if (i + 1 <= lines[master].length && lines[master][i + 1] == '*') {
+                    if (i + 1 < lines[master].length && lines[master][i + 1] == '*') {
                         doublestar = if (doublestar) {
                             tmp.append("</b>")
                             false
@@ -659,7 +659,7 @@ fun list(writer: BufferedWriter,lines :List<String>):Int {
                         }
 
                 '~' ->
-                    if (i + 1 <= lines[master].length && lines[master][i + 1] == '~') {
+                    if (i + 1 < lines[master].length && lines[master][i + 1] == '~') {
                         tilda = if (tilda) {
                             tmp.append("</s>")
                             false
