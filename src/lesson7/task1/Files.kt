@@ -322,12 +322,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var doublestar = false
     var tilda = false
     var tmp = StringBuilder()
+    var crutch = true
     File(inputName).forEachLine { line ->
-        //sdffsf
-        //
-        //
-        //_
-        //3323
         if (line.matches(Regex("""[ \t]*"""))) {
             if (tmp.isNotEmpty()) {
                 tmp.append("</p>")
@@ -335,6 +331,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 tmp = StringBuilder()
             }
         } else {
+            crutch = false
             if (tmp.isEmpty())
                 tmp.append("<p>")
             var index = 0
@@ -382,6 +379,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         writer.appendLine(tmp)
         writer.appendLine("</p>")
     }
+    if (crutch)
+        writer.appendLine("<p></p>")
     writer.appendLine("</body></html>")
     writer.close()
 }
