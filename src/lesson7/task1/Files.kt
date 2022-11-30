@@ -323,7 +323,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var tilda = false
     var tmp = StringBuilder()
     File(inputName).forEachLine { line ->
-        if (line.matches(Regex("""\s*"""))) {
+        //sdffsf
+        //
+        //
+        //_
+        //3323
+        if (line.matches(Regex("""[ \t]*"""))) {
             if (tmp.isNotEmpty()) {
                 tmp.append("</p>")
                 writer.appendLine(tmp)
