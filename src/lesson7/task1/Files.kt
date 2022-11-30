@@ -323,53 +323,54 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     var tilda = false
     var tmp = StringBuilder()
     File(inputName).forEachLine { line ->
-        if (!line.matches(Regex("""\s*"""))) {
-            if (tmp.isEmpty())
-                tmp.append("<p>")
-        } else
+        if (line.matches(Regex("""\s*"""))) {
             if (tmp.isNotEmpty()) {
                 tmp.append("</p>")
                 writer.appendLine(tmp)
                 tmp = StringBuilder()
             }
-        var index = 0
-        while (index < line.length) {
-            when (line[index]) {
-                '*' ->
-                    if (index + 1 != line.length && line[index + 1] == '*') {
-                        doublestar = if (doublestar) {
-                            tmp.append("</b>")
-                            false
-                        } else {
-                            tmp.append("<b>")
-                            true
-                        }
-                        index++
-                    } else
-                        star = if (star) {
-                            tmp.append("</i>")
-                            false
-                        } else {
-                            tmp.append("<i>")
-                            true
-                        }
+        } else {
+            if (tmp.isEmpty())
+                tmp.append("<p>")
+            var index = 0
+            while (index < line.length) {
+                when (line[index]) {
+                    '*' ->
+                        if (index + 1 != line.length && line[index + 1] == '*') {
+                            doublestar = if (doublestar) {
+                                tmp.append("</b>")
+                                false
+                            } else {
+                                tmp.append("<b>")
+                                true
+                            }
+                            index++
+                        } else
+                            star = if (star) {
+                                tmp.append("</i>")
+                                false
+                            } else {
+                                tmp.append("<i>")
+                                true
+                            }
 
-                '~' ->
-                    if (index + 1 != line.length && line[index + 1] == '~') {
-                        tilda = if (tilda) {
-                            tmp.append("</s>")
-                            false
-                        } else {
-                            tmp.append("<s>")
-                            true
-                        }
-                        index++
-                    } else
-                        tmp.append(line[index])
+                    '~' ->
+                        if (index + 1 != line.length && line[index + 1] == '~') {
+                            tilda = if (tilda) {
+                                tmp.append("</s>")
+                                false
+                            } else {
+                                tmp.append("<s>")
+                                true
+                            }
+                            index++
+                        } else
+                            tmp.append(line[index])
 
-                else -> tmp.append(line[index])
+                    else -> tmp.append(line[index])
+                }
+                index++
             }
-            index++
         }
     }
     if (tmp.isNotEmpty()) {
